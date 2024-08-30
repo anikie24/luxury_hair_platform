@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     const cart = localStorage.getItem("cart");
@@ -36,6 +37,8 @@ const Cart = () => {
     setCartItems(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
+  const handleCheckout = () => {
+    navigate("/Shipping"); 
 
   if (cartItems.length === 0) {
     return (
@@ -116,6 +119,7 @@ const Cart = () => {
       </div>
     </div>
   );
+};
 };
 
 export default Cart;
