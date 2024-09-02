@@ -2,7 +2,7 @@ package za.ac.cput.domain;
 
 import jakarta.persistence.*;
 
-import java.util.Date;
+//import java.util.Date;
 import java.util.Objects;
 
     /*Domain Class : Doctor
@@ -19,6 +19,11 @@ import java.util.Objects;
         private String shippingDate;
         private String estimatedDeliveryDate;
         private String deliveryStatus;
+       
+
+        @ManyToOne
+        @JoinColumn(name = "address_id", referencedColumnName = "addressId")
+        private Address address; 
 
         protected Shipping() {
         }
@@ -32,6 +37,8 @@ import java.util.Objects;
             this.shippingDate = builder.shippingDate;
             this.estimatedDeliveryDate =builder.estimatedDeliveryDate;
             this.deliveryStatus = builder.deliveryStatus;
+            this.address = builder.address;
+
         }
 
         public String getShippingID() {
@@ -66,17 +73,23 @@ import java.util.Objects;
             return deliveryStatus;
         }
 
+        public Address getAddress() { 
+            return address;
+        }
+
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             Shipping shipping = (Shipping) o;
-            return trackingNumber == shipping.trackingNumber && Double.compare(shippingCost, shipping.shippingCost) == 0 && Objects.equals(shippingID, shipping.shippingID) && Objects.equals(orderID, shipping.orderID) && Objects.equals(shippingCourier, shipping.shippingCourier) && Objects.equals(shippingDate, shipping.shippingDate) && Objects.equals(estimatedDeliveryDate, shipping.estimatedDeliveryDate) && Objects.equals(deliveryStatus, shipping.deliveryStatus);
+            return trackingNumber == shipping.trackingNumber && Double.compare(shippingCost, shipping.shippingCost) == 0 && Objects.equals(shippingID, shipping.shippingID) && Objects.equals(orderID, shipping.orderID) && Objects.equals(shippingCourier, shipping.shippingCourier) && Objects.equals(shippingDate, shipping.shippingDate) && Objects.equals(estimatedDeliveryDate, shipping.estimatedDeliveryDate) && Objects.equals(deliveryStatus, shipping.deliveryStatus)&&
+            Objects.equals(address, shipping.address);
+ 
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(shippingID, orderID, shippingCourier, trackingNumber, shippingCost, shippingDate, estimatedDeliveryDate, deliveryStatus);
+            return Objects.hash(shippingID, orderID, shippingCourier, trackingNumber, shippingCost, shippingDate, estimatedDeliveryDate, deliveryStatus,address);
         }
 
         @Override
@@ -90,6 +103,7 @@ import java.util.Objects;
                     ", shippingDate=" + shippingDate +
                     ", estimatedDeliveryDate=" + estimatedDeliveryDate +
                     ", deliveryStatus='" + deliveryStatus + '\'' +
+                    ", address=" + address +
                     '}';
         }
         public static class Builder{
@@ -101,6 +115,7 @@ import java.util.Objects;
             private String shippingDate;
             private String estimatedDeliveryDate;
             private String deliveryStatus;
+            private Address address;
 
             public Builder setShippingID(String shippingID) {
                 this.shippingID = shippingID;
@@ -140,6 +155,10 @@ import java.util.Objects;
 
             public Builder setDeliveryStatus(String deliveryStatus) {
                 this.deliveryStatus = deliveryStatus;
+                return this;
+            }
+            public Builder setAddress(Address address) {
+                this.address = address;
                 return this;
             }
 

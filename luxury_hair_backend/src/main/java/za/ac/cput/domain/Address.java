@@ -2,6 +2,7 @@ package za.ac.cput.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+//import jakarta.persistence.OneToMany;
 
 import java.util.Objects;
 @Entity
@@ -12,6 +13,9 @@ public class Address {
     private String streetName;
     private String city;
     private int zipCode;
+
+  //  @OneToMany(mappedBy = "address")
+    //private List<Shipping> shippings;
 
     public Address() {
     }
@@ -42,6 +46,9 @@ public class Address {
     public int getZipCode() {
         return zipCode;
     }
+
+    //public List<Shipping> getShipping() { return shipping; }
+
 
     @Override
     public boolean equals(Object o) {

@@ -49,7 +49,29 @@ const ShippingPage = () => {
 
     const handleCheckout = () => {
         alert('Proceeding to checkout');
+        const shippingData = {
+            name,
+            surname,
+            email,
+            contactNumber,
+            street,
+            city,
+            province,
+            zipCode,
+        };
+
+        axios.post('http://localhost:8080/LuxuryHairVendingSystemDB3/shipping/create', shippingData)
+            .then((response) => {
+                alert('Shipping information saved successfully');
+                console.log(response.data);
+            })
+            .catch((error) => {
+                alert('Failed to save shipping information');
+                console.error(error);
+            });
     };
+
+ 
 
     return (
         <div style={{ maxWidth: '650px', margin: '20px auto', padding: '20px', backgroundColor: '#f7f7f7', color: '#000', border: '1px solid #000', borderRadius: '10px' }}>

@@ -9,13 +9,22 @@ import java.util.List;
 
 @Service
 public class ShippingService implements IShippingService{
+
+    @Autowired
     private ShippingRepository repository;
 
     @Autowired
+    private AddressService addressService;
     ShippingService(ShippingRepository repo){this.repository= repo;}
 
+
     @Override
-    public Shipping create(Shipping shipping){return repository.save(shipping);
+    public Shipping create(Shipping shipping){
+        if (shipping.getAddress() != null) {
+            addressService.create(shipping.getAddress());
+        }
+        
+        return repository.save(shipping);
     }
     @Override
     public Shipping read (String shippingID){return repository.findById(shippingID).orElse(null);
