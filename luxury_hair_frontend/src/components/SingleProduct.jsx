@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import Shipping from "../components/Shipping";
 import "../main.css";
 import "../assets/singleProduct.css";
 
@@ -15,10 +14,11 @@ const SingleProduct = () => {
   const [selectedColor, setSelectedColor] = useState("Black");
   const [selectedStyle, setSelectedStyle] = useState("Customized");
   const [quantity, setQuantity] = useState(1);
-  const [review, setReview] = useState("");
 
   useEffect(() => {
-    fetch(`http://localhost:8080/LuxuryHairVendingSystemDB/product/read/${id}`)
+    const baseUrl = import.meta.env.VITE_BACK_END_URL;
+
+    fetch(`${baseUrl}/product/read/${id}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -60,10 +60,8 @@ const SingleProduct = () => {
     );
 
     if (productIndex >= 0) {
-      // If the product with the same options already exists, update the quantity
       cart[productIndex].quantity += cartProduct.quantity;
     } else {
-      // Otherwise, add the new product to the cart
       cart.push(cartProduct);
     }
 
@@ -73,28 +71,6 @@ const SingleProduct = () => {
 
   const handleBuyNow = () => {
     navigate("/cart");
-  };
-
-  const handleSubmitReview = () => {
-    fetch(`http://localhost:8080/LuxuryHairVendingSystemDB/reviews`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        productId: id,
-        review,
-      }),
-    })
-      .then((response) => response.json())
-      .then(() => {
-        alert("Review submitted!");
-        setReview("");
-      })
-      .catch((error) => {
-        console.error("Error submitting review:", error);
-        alert("Failed to submit review");
-      });
   };
 
   if (loading) {
@@ -115,11 +91,16 @@ const SingleProduct = () => {
       <div id="singleproduct" className="max-w-7xl mx-auto mt-4">
         <div key={product.productId} className="flex rounded-lg shadow-2xl">
           <div className="w-full">
-            <img
-              src={"../src/assets/" + product.image}
-              alt={product.hairStyle}
-              className="w-full"
-            />
+            {/* Display the base64-encoded image */}
+            {product.image ? (
+              <img
+                src={`data:image/jpeg;base64,${product.image}`}
+                alt={product.hairStyle}
+                className="product-image"
+              />
+            ) : (
+              <p>No Image Available</p>
+            )}
           </div>
 
           <div className="w-full px-4">
@@ -137,109 +118,26 @@ const SingleProduct = () => {
               </p>
             </div>
 
-            <>
-              {/* Length Section */}
-              <p className="text-black py-2">Length</p>
-              <div className="flex">
-                <button
-                  onClick={() => setSelectedLength("12 inches")}
-                  className={`option-btn ${
-                    selectedLength === "12 inches" ? "highlighted" : ""
-                  }`}
-                >
-                  12 Inch
-                </button>
-                <button
-                  onClick={() => setSelectedLength("14 inches")}
-                  className={`option-btn ${
-                    selectedLength === "14 inches" ? "highlighted" : ""
-                  }`}
-                >
-                  14 Inch
-                </button>
-                <button
-                  onClick={() => setSelectedLength("16 inches")}
-                  className={`option-btn ${
-                    selectedLength === "16 inches" ? "highlighted" : ""
-                  }`}
-                >
-                  16 Inch
-                </button>
-              </div>
+          
 
-              {/* Color Section */}
-              <div className="mt-4 py-2">
-                <p className="text-black">Color</p>
-                <div className="flex">
-                  <button
-                    onClick={() => setSelectedColor("Brown")}
-                    className={`option-btn ${
-                      selectedColor === "Brown" ? "highlighted" : ""
-                    }`}
-                  >
-                    Brown
-                  </button>
-                  <button
-                    onClick={() => setSelectedColor("Black")}
-                    className={`option-btn ${
-                      selectedColor === "Black" ? "highlighted" : ""
-                    }`}
-                  >
-                    Black
-                  </button>
-                  <button
-                    onClick={() => setSelectedColor("Red")}
-                    className={`option-btn ${
-                      selectedColor === "Red" ? "highlighted" : ""
-                    }`}
-                  >
-                    Red
-                  </button>
-                </div>
-              </div>
+            <div className="mt-4 py-2">
+              <p className="text-black">Quantity</p>
+              <input
+                type="number"
+                value={quantity}
+                onChange={(e) => setQuantity(parseInt(e.target.value))}
+                className="bg-white border border-black border-2 text-black px-2 rounded-lg"
+              />
+            </div>
 
-              {/* Style Section */}
-              <div className="mt-4 py-2">
-                <p className="text-black">Style</p>
-                <div className="flex">
-                  <button
-                    onClick={() => setSelectedStyle("Customized")}
-                    className={`option-btn ${
-                      selectedStyle === "Customized" ? "highlighted" : ""
-                    }`}
-                  >
-                    Customized
-                  </button>
-                  <button
-                    onClick={() => setSelectedStyle("Non-Customized")}
-                    className={`option-btn ${
-                      selectedStyle === "Non-Customized" ? "highlighted" : ""
-                    }`}
-                  >
-                    Non-Customized
-                  </button>
-                </div>
-              </div>
-
-              <div className="mt-4 py-2">
-                <p className="text-black">Quantity</p>
-                <input
-                  type="number"
-                  value={quantity}
-                  onChange={(e) => setQuantity(parseInt(e.target.value))}
-                  className="bg-white border border-black border-2 text-black px-2 rounded-lg"
-                />
-              </div>
-
-              <div className="mt-4 py-2">
-                <button onClick={handleAddToCart} className="w-full">
-                  Add to Cart
-                </button>
-                <button onClick={handleBuyNow} className="w-full mt-2">
-                  Buy Now
-                </button>
-              </div>
-            </>
+            <div className="mt-4 py-2">
+              <button onClick={handleAddToCart} className="w-full">
+                Add to Cart
+              </button>
+              <button onClick={handleBuyNow} className="w-full mt-2">
+                Buy Now
+              </button>
+            </div>
           </div>
         </div>
       </div>
